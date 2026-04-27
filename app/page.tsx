@@ -468,7 +468,6 @@ const WEATHERED_OAK_SHELF_IMAGE = "/shelf-weathered-gray-oak.png";
 const ELECTRIC_BLUE_SHELF_THEME = "/shelf-electric-blue.png";
 const SIMPLE_SHELF_THEME = "simpleShelf";
 const DEFAULT_SIMPLE_SHELF_BACKGROUND = "#edf0f4";
-const DEFAULT_SIDEBAR_THEME = "simple";
 const SHELF_TOP_HEADER_IMAGES: Record<string, string> = {
   "/shelves-light-single2.png": LIGHT_OAK_TOP_HEADER_IMAGE,
   "/shelf-dark-walnut.png": "/wood_beam_header_dark_walnut.png",
@@ -1976,171 +1975,50 @@ export default function Page() {
     : SHELF_TOP_HEADER_IMAGES[shelfTheme] || DARK_WALNUT_TOP_HEADER_IMAGE;
   
   // Sidebar theme
-  const [sidebarTheme, setSidebarTheme] = useState<string>(DEFAULT_SIDEBAR_THEME);
-  const isElectricBlueThemeActive = !useSimpleMobileTheme && (isElectricBlueShelfTheme || sidebarTheme === "electricBlue");
+  const isElectricBlueThemeActive = !useSimpleMobileTheme && isElectricBlueShelfTheme;
   
   // Theme configurations
   const simpleSidebarTheme = buildSimpleSidebarTheme(simpleShelfBackgroundColor);
-  const sidebarThemes = {
-    standard: {
-      background: "url('/sidebar.png'), linear-gradient(180deg, #f4f1ea 0%, #efe7db 100%)",
-      primaryColor: "#954949",
-      secondaryColor: "#8a4c4c",
-      textColor: "rgba(0,0,0,0.85)",
-      arrowColor: "rgba(0,0,0,0.4)",
-      rolodexColor: "#8a4c4c",
-      rolodexDigitColor: "#8a4c4c",
-      rolodexLabelColor: "#8a4c4c",
-      rolodexTileBg: "linear-gradient(180deg, #f5f0e8 0%, #ebe4d8 100%)",
-      rolodexTileBorder: "rgba(139,69,19,.15)",
-      countBubbleColor: "#6ba56a",
-      syncedTextColor: "#754738",
-      highlightBg: "rgba(138, 76, 76, 0.75)",
-      highlightBgEnd: "rgba(118, 60, 60, 0.8)",
-      highlightBorder: "rgba(138, 76, 76, 0.4)",
-      activeHighlight: "rgba(138, 76, 76, 0.15)",
-    },
-    winterGray: {
-      background: "url('/sidebar_gray.png'), linear-gradient(180deg, #e8ecf0 0%, #d8dde3 100%)",
-      primaryColor: "#5a7a8c",
-      secondaryColor: "#769795",
-      textColor: "rgba(0,0,0,0.85)",
-      arrowColor: "rgba(0,0,0,0.4)",
-      rolodexColor: "#5a7a8c",
-      rolodexDigitColor: "#4e7470",
-      rolodexLabelColor: "#000000",
-      rolodexTileBg: "linear-gradient(180deg, #d8e2e6 0%, #c5d3d8 100%)",
-      rolodexTileBorder: "rgba(78,116,112,.2)",
-      countBubbleColor: "#4e7470",
-      syncedTextColor: "#4e7470",
-      highlightBg: "rgba(118, 151, 149, 0.92)",
-      highlightBgEnd: "rgba(100, 130, 128, 0.95)",
-      highlightBorder: "rgba(118, 151, 149, 0.6)",
-      activeHighlight: "rgba(118, 151, 149, 0.28)",
-    },
-    darkBlue: {
-      background:
-        "linear-gradient(180deg, rgba(18, 34, 61, 0.78) 0%, rgba(12, 24, 44, 0.74) 100%), linear-gradient(180deg, rgba(10, 20, 38, 0.72) 0%, rgba(8, 15, 30, 0.72) 100%)",
-      primaryColor: "#9eb8e6",
-      secondaryColor: "#d7e4ff",
-      textColor: "rgba(233, 240, 255, 0.9)",
-      arrowColor: "rgba(210, 226, 255, 0.65)",
-      rolodexColor: "#4f74b8",
-      rolodexDigitColor: "#2f5fae",
-      rolodexLabelColor: "#dbe8ff",
-      rolodexTileBg: "linear-gradient(180deg, #eef4ff 0%, #dde9ff 100%)",
-      rolodexTileBorder: "rgba(148,177,228,.35)",
-      countBubbleColor: "#5a78b8",
-      syncedTextColor: "#cfe0ff",
-      highlightBg: "rgba(42, 69, 114, 0.92)",
-      highlightBgEnd: "rgba(31, 54, 95, 0.95)",
-      highlightBorder: "rgba(121, 154, 214, 0.52)",
-      activeHighlight: "rgba(89, 123, 186, 0.28)",
-    },
-    electricBlue: {
-      background:
-        "linear-gradient(180deg, rgba(19, 40, 78, 0.82) 0%, rgba(10, 23, 48, 0.8) 100%), linear-gradient(180deg, rgba(10, 22, 44, 0.76) 0%, rgba(7, 16, 34, 0.76) 100%)",
-      primaryColor: "#8ec4ff",
-      secondaryColor: "#e8f4ff",
-      textColor: "rgba(234, 243, 255, 0.94)",
-      arrowColor: "rgba(190, 224, 255, 0.78)",
-      rolodexColor: "#3f78d8",
-      rolodexDigitColor: "#2a61c7",
-      rolodexLabelColor: "#dff0ff",
-      rolodexTileBg: "linear-gradient(180deg, #f4f8ff 0%, #e4efff 100%)",
-      rolodexTileBorder: "rgba(136,181,242,.45)",
-      countBubbleColor: "#4f7fd4",
-      syncedTextColor: "#d8eaff",
-      highlightBg: "rgba(49, 85, 146, 0.94)",
-      highlightBgEnd: "rgba(34, 64, 118, 0.96)",
-      highlightBorder: "rgba(144, 192, 255, 0.6)",
-      activeHighlight: "rgba(108, 159, 230, 0.34)",
-    },
-    simple: simpleSidebarTheme
-  };
-  
-  const currentTheme = sidebarThemes[sidebarTheme as keyof typeof sidebarThemes] || sidebarThemes.standard;
+  const currentTheme = simpleSidebarTheme;
   const simpleSidebarIsLight = simpleSidebarTheme.isLightBackground;
   const simpleSidebarTextHex = simpleSidebarTheme.baseTextHex;
   const simpleSidebarOverlayBase = simpleSidebarTheme.overlayBaseHex;
   const simplePresentationBackground = simpleSidebarTheme.background;
-  const isBlueSidebarTheme = sidebarTheme === "darkBlue" || sidebarTheme === "electricBlue";
-  const isSimpleSidebarTheme = sidebarTheme === "simple";
-  const isMacSidebarTheme = isSimpleSidebarTheme;
-  const isDarkSidebarTheme = isBlueSidebarTheme || isSimpleSidebarTheme;
-  const sidebarHasDarkSurface = isBlueSidebarTheme || (isSimpleSidebarTheme && !simpleSidebarIsLight);
-  const isElectricBlueSidebarTheme = sidebarTheme === "electricBlue";
-  const usesThemeCountBubbleColor = isSimpleSidebarTheme || sidebarTheme === "winterGray";
-  const sidebarModuleStackGap = isElectricBlueSidebarTheme ? 9 : isMacSidebarTheme ? 18 : 6;
-  const sidebarModuleMarginTop = isMacSidebarTheme ? 10 : 12;
-  const sidebarPrimaryModuleMarginTop = isElectricBlueSidebarTheme ? 9 : isMacSidebarTheme ? 0 : 6;
-  const sidebarModuleCardPadding = isMacSidebarTheme ? "0" : "12px";
-  const sidebarSectionSpacing = isMacSidebarTheme ? 18 : 16;
-  const sidebarPrimaryModulePadding = isMacSidebarTheme ? "0" : sidebarModuleCardPadding;
-  const sidebarDiscoverModulePadding = isMacSidebarTheme ? "0" : sidebarModuleCardPadding;
-  const sidebarModuleCardBackground = isSimpleSidebarTheme
-    ? "transparent"
-    : isElectricBlueSidebarTheme
-    ? "linear-gradient(180deg, rgba(33, 67, 122, 0.44) 0%, rgba(18, 36, 73, 0.5) 100%)"
-    : "rgba(255, 255, 255, 0.125)";
-  const sidebarModuleCardShadow = isSimpleSidebarTheme
-    ? "none"
-    : isElectricBlueSidebarTheme
-    ? "0 0 10px rgba(110, 190, 255, 0.42), 0 0 18px rgba(68, 141, 247, 0.28), -16px 0 26px rgba(0, 0, 0, 0.22), -6px 0 10px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.18), 0 3px 6px rgba(0, 0, 0, 0.13), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 0 30px rgba(7, 20, 44, 0.34)"
-    : "-16px 0 26px rgba(0, 0, 0, 0.28), -6px 0 10px rgba(0, 0, 0, 0.18), 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 12px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.7), inset 0 0 40px rgba(0, 0, 0, 0.08)";
-  const sidebarModuleCardBorder = isSimpleSidebarTheme
-    ? "none"
-    : isElectricBlueSidebarTheme
-    ? "1px solid transparent"
-    : "1px solid rgba(255, 255, 255, 0.5)";
-  const sidebarModuleCardBorderBottom = isSimpleSidebarTheme
-    ? "none"
-    : isElectricBlueSidebarTheme
-    ? "1px solid transparent"
-    : "1px solid rgba(0, 0, 0, 0.15)";
-  const sidebarSectionFontFamily = isSimpleSidebarTheme
-    ? "\"Geist Sans\", \"Geist\", \"Segoe UI\", sans-serif"
-    : "\"Nunito\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Roboto\", sans-serif";
-  const sidebarBackplateOpacity = isMacSidebarTheme ? 1 : sidebarTheme === "winterGray" ? 0.8 : isDarkSidebarTheme ? 0.9 : 0.84;
-  const sidebarBackplateBackgroundSize = isSimpleSidebarTheme ? "100% 100%" : "auto, 100% 100%";
-  const sidebarBackplateBackgroundPosition = isSimpleSidebarTheme ? "0 0" : "0 0, 0 0";
-  const sidebarShellBackground = isSimpleSidebarTheme ? "transparent" : "rgba(255, 255, 255, 0.125)";
-  const sidebarShellShadow = isSimpleSidebarTheme
-    ? "none"
-    : "-2px 0 5px rgba(0, 0, 0, 0.2), 2px 0 4px rgba(0, 0, 0, 0.5), 6px 0 10px rgba(0, 0, 0, 0.4), 12px 0 18px rgba(0, 0, 0, 0.3), 20px 0 30px rgba(0, 0, 0, 0.22), 30px 0 44px rgba(0, 0, 0, 0.14), 6px 8px 16px rgba(0, 0, 0, 0.14)";
-  const sidebarSectionDividerColor = isSimpleSidebarTheme
-    ? `1px solid ${hexToRgba(simpleSidebarTextHex, simpleSidebarIsLight ? 0.14 : 0.12, simpleSidebarTextHex)}`
-    : "1px solid rgba(0,0,0,0.06)";
-  const sidebarChevronColor = isSimpleSidebarTheme
-    ? hexToRgba(simpleSidebarTextHex, 0.58, simpleSidebarTextHex)
-    : "rgba(0,0,0,0.4)";
-  const sidebarToggleColor = isSimpleSidebarTheme
-    ? hexToRgba(simpleSidebarTextHex, 0.74, simpleSidebarTextHex)
-    : "rgba(0,0,0,0.5)";
-  const sidebarThemePanelTextColor = isSimpleSidebarTheme
-    ? hexToRgba(simpleSidebarTextHex, 0.8, simpleSidebarTextHex)
-    : isDarkSidebarTheme
-      ? "rgba(225, 236, 238, 0.8)"
-      : "rgba(0,0,0,0.68)";
-  const sidebarThemePanelSectionColor = isSimpleSidebarTheme
-    ? hexToRgba(simpleSidebarTextHex, 0.68, simpleSidebarTextHex)
-    : isDarkSidebarTheme
-      ? "rgba(200, 217, 220, 0.78)"
-      : "#8A8A8A";
-  const sidebarThemeOptionBorder = isSimpleSidebarTheme
-    ? `1px solid ${hexToRgba(simpleSidebarTextHex, 0.14, simpleSidebarTextHex)}`
-    : isDarkSidebarTheme
-      ? "1px solid rgba(232, 243, 245, 0.14)"
-      : "1px solid rgba(0,0,0,0.1)";
-  const sidebarThemeOptionBackground = isSimpleSidebarTheme
-    ? hexToRgba(simpleSidebarOverlayBase, simpleSidebarIsLight ? 0.04 : 0.06, simpleSidebarOverlayBase)
-    : isDarkSidebarTheme
-      ? "rgba(255,255,255,0.06)"
-      : "rgba(255,255,255,0.5)";
-  const sidebarThemeOptionTextColor = isSimpleSidebarTheme ? currentTheme.textColor : isDarkSidebarTheme ? currentTheme.textColor : "#2A2A2A";
-  const smartListsExpanded = isSimpleSidebarTheme || smartListsOpen;
-  const sidebarOptionActiveBorder = isSimpleSidebarTheme ? `2px solid ${currentTheme.highlightBorder}` : `2px solid ${currentTheme.primaryColor}`;
-  const sidebarOptionActiveBackground = isSimpleSidebarTheme ? currentTheme.activeHighlight : `${currentTheme.primaryColor}1A`;
+  const isBlueSidebarTheme = false;
+  const isSimpleSidebarTheme = true;
+  const isMacSidebarTheme = true;
+  const isDarkSidebarTheme = !simpleSidebarIsLight;
+  const sidebarHasDarkSurface = !simpleSidebarIsLight;
+  const isElectricBlueSidebarTheme = false;
+  const usesThemeCountBubbleColor = true;
+  const sidebarModuleStackGap = 18;
+  const sidebarModuleMarginTop = 10;
+  const sidebarPrimaryModuleMarginTop = 0;
+  const sidebarModuleCardPadding = "0";
+  const sidebarSectionSpacing = 18;
+  const sidebarPrimaryModulePadding = "0";
+  const sidebarDiscoverModulePadding = "0";
+  const sidebarModuleCardBackground = "transparent";
+  const sidebarModuleCardShadow = "none";
+  const sidebarModuleCardBorder = "none";
+  const sidebarModuleCardBorderBottom = "none";
+  const sidebarSectionFontFamily = "\"Geist Sans\", \"Geist\", \"Segoe UI\", sans-serif";
+  const sidebarBackplateOpacity = 1;
+  const sidebarBackplateBackgroundSize = "100% 100%";
+  const sidebarBackplateBackgroundPosition = "0 0";
+  const sidebarShellBackground = "transparent";
+  const sidebarShellShadow = "none";
+  const sidebarSectionDividerColor = `1px solid ${hexToRgba(simpleSidebarTextHex, simpleSidebarIsLight ? 0.14 : 0.12, simpleSidebarTextHex)}`;
+  const sidebarChevronColor = hexToRgba(simpleSidebarTextHex, 0.58, simpleSidebarTextHex);
+  const sidebarToggleColor = hexToRgba(simpleSidebarTextHex, 0.74, simpleSidebarTextHex);
+  const sidebarThemePanelTextColor = hexToRgba(simpleSidebarTextHex, 0.8, simpleSidebarTextHex);
+  const sidebarThemePanelSectionColor = hexToRgba(simpleSidebarTextHex, 0.68, simpleSidebarTextHex);
+  const sidebarThemeOptionBorder = `1px solid ${hexToRgba(simpleSidebarTextHex, 0.14, simpleSidebarTextHex)}`;
+  const sidebarThemeOptionBackground = hexToRgba(simpleSidebarOverlayBase, simpleSidebarIsLight ? 0.04 : 0.06, simpleSidebarOverlayBase);
+  const sidebarThemeOptionTextColor = currentTheme.textColor;
+  const smartListsExpanded = true;
+  const sidebarOptionActiveBorder = `2px solid ${currentTheme.highlightBorder}`;
+  const sidebarOptionActiveBackground = currentTheme.activeHighlight;
   const simpleShelfColorPanelBorder =
     shelfTheme === SIMPLE_SHELF_THEME
       ? `1px solid ${hexToRgba(simpleSidebarTextHex, simpleSidebarIsLight ? 0.16 : 0.22, simpleSidebarTextHex)}`
@@ -2422,11 +2300,9 @@ export default function Page() {
         settingsCacheRef.current = JSON.parse(localStorage.getItem("cdlSettingsCache") || "{}");
       }
       const cache = settingsCacheRef.current || {};
-      const cachedSidebarTheme = safeStr(cache["sidebarTheme"]);
       const cachedShelfTheme = safeStr(cache["shelfTheme"]);
       const cachedSimpleShelfBackgroundColor = safeStr(cache["simpleShelfBackgroundColor"]);
       const cachedMobileCoverScalePct = getCachedNumericSetting("mobileCoverScalePct");
-      if (cachedSidebarTheme) setSidebarTheme(cachedSidebarTheme);
       if (cachedShelfTheme) setShelfTheme(normalizeShelfTheme(cachedShelfTheme));
       if (cachedSimpleShelfBackgroundColor) {
         setSimpleShelfBackgroundColor(normalizeHexColor(cachedSimpleShelfBackgroundColor));
@@ -5116,7 +4992,6 @@ export default function Page() {
     }
     setSmartListManualOrderKeysById(loadedSmartListManualOrders);
     
-    setSidebarTheme(getSetting("sidebarTheme", DEFAULT_SIDEBAR_THEME));
     setShelfTheme(normalizeShelfTheme(getSetting("shelfTheme", DEFAULT_SHELF_IMAGE)));
     setSimpleShelfBackgroundColor(normalizeHexColor(getSetting("simpleShelfBackgroundColor", DEFAULT_SIMPLE_SHELF_BACKGROUND)));
   }, [getCachedNumericSetting, getSetting, settingsRows]);
@@ -5581,7 +5456,6 @@ export default function Page() {
       { key: "sidebarGap", value: sidebarGap, category: "Sidebar", description: "Sidebar Icon Gap" },
       { key: "sidebarHeaderFontSize", value: sidebarHeaderFontSize, category: "Sidebar", description: "Sidebar Header Font Size" },
       { key: "sidebarHeaderFontWeight", value: sidebarHeaderFontWeight, category: "Sidebar", description: "Sidebar Header Font Weight" },
-      { key: "sidebarTheme", value: sidebarTheme, category: "Themes", description: "Sidebar Theme" },
       { key: "shelfTheme", value: shelfTheme, category: "Themes", description: "Shelf Theme" },
       { key: "simpleShelfBackgroundColor", value: simpleShelfBackgroundColor, category: "Themes", description: "Simple Shelf Background Color" },
       { key: "showInsetGuide", value: showInsetGuide, category: "Cover Sizes", description: "Show inset frame guide" },
@@ -5769,7 +5643,6 @@ export default function Page() {
         setSidebarHeaderFontWeight(getStr("sidebarHeaderFontWeight", "600"));
         setShelfTheme(normalizeShelfTheme(getStr("shelfTheme", DEFAULT_SHELF_IMAGE)));
         setSimpleShelfBackgroundColor(normalizeHexColor(getStr("simpleShelfBackgroundColor", DEFAULT_SIMPLE_SHELF_BACKGROUND)));
-        setSidebarTheme(getStr("sidebarTheme", DEFAULT_SIDEBAR_THEME));
         setShowStatusIndicators(getBool("showStatusIndicators", false));
       }, 100);
       
@@ -6050,19 +5923,6 @@ export default function Page() {
     setThemeSaveNotice(`Saved Simple Shelf background: ${normalizedColor.toUpperCase()}. This will be used next time.`);
   };
   
-  const updateSidebarTheme = (value: string) => {
-    setSidebarTheme(value);
-    saveSetting("sidebarTheme", value, "Themes", "Sidebar Theme");
-    const sidebarThemeNames: Record<string, string> = {
-      simple: "Simple",
-      standard: "Standard",
-      winterGray: "Winter Gray",
-      darkBlue: "Dark Blue",
-      electricBlue: "Electric Blue",
-    };
-    setThemeSaveNotice(`Saved theme: ${sidebarThemeNames[value] || "Sidebar theme"}. This will be used next time.`);
-  };
-
   useEffect(() => {
     if (globalCoverScalePct === 100 && !globalCoverScaleSaveTimerRef.current) {
       globalCoverScaleBaseRef.current = {
@@ -12891,96 +12751,7 @@ export default function Page() {
                   </div>
                 ) : null}
                 <div style={{ fontSize: 11, color: sidebarThemePanelTextColor }}>
-                  Theme changes auto-save immediately and are used next time.
-                </div>
-                {/* Sidebar Theme Section */}
-                <div style={{ fontSize: 11, fontWeight: 700, color: sidebarThemePanelSectionColor }}>SIDEBAR THEME</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <button
-                    onClick={() => updateSidebarTheme("simple")}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      border: sidebarTheme === "simple" ? sidebarOptionActiveBorder : sidebarThemeOptionBorder,
-                      borderRadius: 8,
-                      background: sidebarTheme === "simple" ? sidebarOptionActiveBackground : sidebarThemeOptionBackground,
-                      color: sidebarThemeOptionTextColor,
-                      cursor: "pointer",
-                      fontSize: 11,
-                      fontWeight: sidebarTheme === "simple" ? 600 : 400,
-                    }}
-                  >
-                    Simple
-                  </button>
-                  <button
-                    onClick={() => updateSidebarTheme("standard")}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      border: sidebarTheme === "standard" ? sidebarOptionActiveBorder : sidebarThemeOptionBorder,
-                      borderRadius: 8,
-                      background: sidebarTheme === "standard" ? sidebarOptionActiveBackground : sidebarThemeOptionBackground,
-                      color: sidebarThemeOptionTextColor,
-                      cursor: "pointer",
-                      fontSize: 11,
-                      fontWeight: sidebarTheme === "standard" ? 600 : 400,
-                    }}
-                  >
-                    Standard
-                  </button>
-                  <button
-                    onClick={() => updateSidebarTheme("winterGray")}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      border: sidebarTheme === "winterGray" ? sidebarOptionActiveBorder : sidebarThemeOptionBorder,
-                      borderRadius: 8,
-                      background: sidebarTheme === "winterGray" ? sidebarOptionActiveBackground : sidebarThemeOptionBackground,
-                      color: sidebarThemeOptionTextColor,
-                      cursor: "pointer",
-                      fontSize: 11,
-                      fontWeight: sidebarTheme === "winterGray" ? 600 : 400,
-                    }}
-                  >
-                    Winter Gray
-                  </button>
-                  <button
-                    onClick={() => updateSidebarTheme("darkBlue")}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      border: sidebarTheme === "darkBlue" ? sidebarOptionActiveBorder : sidebarThemeOptionBorder,
-                      borderRadius: 8,
-                      background: sidebarTheme === "darkBlue" ? sidebarOptionActiveBackground : sidebarThemeOptionBackground,
-                      color: sidebarThemeOptionTextColor,
-                      cursor: "pointer",
-                      fontSize: 11,
-                      fontWeight: sidebarTheme === "darkBlue" ? 600 : 400,
-                    }}
-                  >
-                    Dark Blue
-                  </button>
-                  <button
-                    onClick={() => updateSidebarTheme("electricBlue")}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      border: sidebarTheme === "electricBlue" ? sidebarOptionActiveBorder : sidebarThemeOptionBorder,
-                      borderRadius: 8,
-                      background: sidebarTheme === "electricBlue" ? sidebarOptionActiveBackground : sidebarThemeOptionBackground,
-                      color: sidebarThemeOptionTextColor,
-                      cursor: "pointer",
-                      fontSize: 11,
-                      fontWeight: sidebarTheme === "electricBlue" ? 600 : 400,
-                    }}
-                  >
-                    Electric Blue
-                  </button>
+                  The sidebar is now fixed to the Mac-style layout. Shelf changes auto-save immediately and are used next time.
                 </div>
                 
                 {/* Shelf Theme Section */}
