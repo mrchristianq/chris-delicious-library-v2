@@ -1794,7 +1794,9 @@ export default function Page() {
   const [sortPopupOpen, setSortPopupOpen] = useState<boolean>(false);
   const [faqPopupOpen, setFaqPopupOpen] = useState<boolean>(false);
   const [openSection, setOpenSection] = useState<NavKey | null>(null);
-  const [smartListsOpen, setSmartListsOpen] = useState<boolean>(false);
+  const [librarySectionOpen, setLibrarySectionOpen] = useState<boolean>(true);
+  const [backlogSectionOpen, setBacklogSectionOpen] = useState<boolean>(true);
+  const [smartListsOpen, setSmartListsOpen] = useState<boolean>(true);
   const [discoverOpen, setDiscoverOpen] = useState<boolean>(true);
   const [customSmartLists, setCustomSmartLists] = useState<SmartList[]>([]);
   const [selectedSmartListId, setSelectedSmartListId] = useState<string | null>(null);
@@ -2016,7 +2018,7 @@ export default function Page() {
   const sidebarThemeOptionBorder = `1px solid ${hexToRgba(simpleSidebarTextHex, 0.14, simpleSidebarTextHex)}`;
   const sidebarThemeOptionBackground = hexToRgba(simpleSidebarOverlayBase, simpleSidebarIsLight ? 0.04 : 0.06, simpleSidebarOverlayBase);
   const sidebarThemeOptionTextColor = currentTheme.textColor;
-  const smartListsExpanded = true;
+  const smartListsExpanded = isSimpleSidebarTheme ? true : smartListsOpen;
   const sidebarOptionActiveBorder = `2px solid ${currentTheme.highlightBorder}`;
   const sidebarOptionActiveBackground = currentTheme.activeHighlight;
   const simpleShelfColorPanelBorder =
@@ -10521,47 +10523,88 @@ export default function Page() {
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "0 4px 10px 4px",
+                  flexDirection: "column",
+                  gap: 12,
+                  padding: "2px 4px 12px 4px",
                   borderBottom: sidebarSectionDividerColor,
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={APP_ICON}
-                  alt={APP_TITLE}
+                <div
                   style={{
-                    width: 18,
-                    height: 18,
-                    objectFit: "contain",
-                    flexShrink: 0,
-                    filter: "grayscale(1) saturate(0) brightness(0.38)",
-                    opacity: 0.88,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
                   }}
-                />
-                <div style={{ minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "rgba(24, 28, 34, 0.92)",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    Library
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <span aria-hidden style={{ width: 12, height: 12, borderRadius: 999, background: "linear-gradient(180deg, #ff6b63 0%, #ff5248 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)" }} />
+                    <span aria-hidden style={{ width: 12, height: 12, borderRadius: 999, background: "linear-gradient(180deg, #ffcf4a 0%, #f6b938 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)" }} />
+                    <span aria-hidden style={{ width: 12, height: 12, borderRadius: 999, background: "linear-gradient(180deg, #33d05f 0%, #28bf4f 100%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5)" }} />
                   </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "rgba(100, 106, 116, 0.86)",
-                      marginTop: 2,
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {loading ? "Loading..." : `${totalLibraryItems} items`}
+                  <div style={{ minWidth: 0, textAlign: "right" }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: "rgba(28, 31, 37, 0.9)",
+                        lineHeight: 1.15,
+                      }}
+                    >
+                      Library
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "rgba(109, 114, 123, 0.9)",
+                        marginTop: 2,
+                        lineHeight: 1.15,
+                      }}
+                    >
+                      {loading ? "Loading..." : `${totalLibraryItems} items`}
+                    </div>
                   </div>
                 </div>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    minHeight: 36,
+                    padding: "0 12px",
+                    borderRadius: 12,
+                    border: "1px solid rgba(198, 203, 212, 0.92)",
+                    background: "linear-gradient(180deg, rgba(248,249,251,0.88) 0%, rgba(234,237,242,0.96) 100%)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.8)",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/icon-search.png"
+                    alt=""
+                    style={{
+                      width: 14,
+                      height: 14,
+                      objectFit: "contain",
+                      opacity: 0.45,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search"
+                    style={{
+                      width: "100%",
+                      border: "none",
+                      outline: "none",
+                      background: "transparent",
+                      color: "rgba(36, 40, 46, 0.92)",
+                      fontSize: 13,
+                      fontWeight: 500,
+                    }}
+                  />
+                </label>
               </div>
             ) : (
               <>
@@ -10661,24 +10704,35 @@ export default function Page() {
               }}
             >
               <div style={{ padding: "0px", display: "flex", flexDirection: "column", gap: 0 }}>
-              <div
+              <button
+                type="button"
+                onClick={() => setLibrarySectionOpen((value) => !value)}
                 style={{
+                  width: "100%",
+                  textAlign: "left",
                   fontSize: sidebarHeaderFontSize,
-                  fontWeight: sidebarHeaderFontWeight,
-                  letterSpacing: "0.04em",
-                  color: currentTheme.primaryColor,
-                  marginBottom: 6,
-                  fontFamily: sidebarSectionFontFamily,
+                  fontWeight: isMacSidebarTheme ? 700 : sidebarHeaderFontWeight,
+                  letterSpacing: isMacSidebarTheme ? "0.01em" : "0.04em",
+                  color: isMacSidebarTheme ? "rgba(114, 119, 126, 0.96)" : currentTheme.primaryColor,
+                  marginBottom: isMacSidebarTheme ? 8 : 6,
+                  fontFamily: isMacSidebarTheme ? '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif' : sidebarSectionFontFamily,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  border: "none",
+                  background: "transparent",
+                  padding: 0,
+                  cursor: "pointer",
                 }}
               >
-                <span>LIBRARY</span>
-                <span />
-              </div>
+                <span>Library</span>
+                <span style={{ color: isMacSidebarTheme ? "rgba(124, 129, 136, 0.96)" : sidebarToggleColor, fontSize: 12, fontWeight: 700 }}>
+                  {librarySectionOpen ? "▾" : "▸"}
+                </span>
+              </button>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {librarySectionOpen ? (
+              <>
                 <button
                   onClick={() => setNav("home")}
                   className={`sideItem ${nav === "home" ? "active" : ""}`}
@@ -11958,25 +12012,39 @@ export default function Page() {
                     ) : null}
                   </div>
                 ) : null}
+              </>
+              ) : null}
 
-                <div
+                <button
+                  type="button"
+                  onClick={() => setBacklogSectionOpen((value) => !value)}
                   style={{
+                    width: "100%",
+                    textAlign: "left",
                     marginTop: sidebarSectionSpacing,
-                    marginBottom: 6,
+                    marginBottom: isMacSidebarTheme ? 8 : 6,
                     fontSize: sidebarHeaderFontSize,
-                    fontWeight: sidebarHeaderFontWeight,
-                    letterSpacing: "0.04em",
-                    color: currentTheme.primaryColor,
-                    fontFamily: sidebarSectionFontFamily,
+                    fontWeight: isMacSidebarTheme ? 700 : sidebarHeaderFontWeight,
+                    letterSpacing: isMacSidebarTheme ? "0.01em" : "0.04em",
+                    color: isMacSidebarTheme ? "rgba(114, 119, 126, 0.96)" : currentTheme.primaryColor,
+                    fontFamily: isMacSidebarTheme ? '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif' : sidebarSectionFontFamily,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    border: "none",
+                    background: "transparent",
+                    padding: 0,
+                    cursor: "pointer",
                   }}
                 >
-                  <span>BACKLOG</span>
-                  <span />
-                </div>
+                  <span>Backlog</span>
+                  <span style={{ color: isMacSidebarTheme ? "rgba(124, 129, 136, 0.96)" : sidebarToggleColor, fontSize: 12, fontWeight: 700 }}>
+                    {backlogSectionOpen ? "▾" : "▸"}
+                  </span>
+                </button>
 
+                {backlogSectionOpen ? (
+                <>
 	                <button
 	                  onClick={() => {
 	                    setNav("now-playing");
@@ -12343,7 +12411,8 @@ export default function Page() {
                     <span style={{ color: sidebarChevronColor, fontSize: 15, fontWeight: 400 }}>›</span>
                   </span>
                 </button>
-              </div>
+                </>
+                ) : null}
 
               {/* SMART LISTS section */}
               <div style={{ marginTop: sidebarSectionSpacing }}>
@@ -12357,11 +12426,11 @@ export default function Page() {
                   width: "100%",
                   textAlign: "left",
                   fontSize: sidebarHeaderFontSize,
-                  fontWeight: sidebarHeaderFontWeight,
-                  letterSpacing: "0.04em",
-                  color: currentTheme.primaryColor,
-                  marginBottom: 6,
-                  fontFamily: sidebarSectionFontFamily,
+                  fontWeight: isMacSidebarTheme ? 700 : sidebarHeaderFontWeight,
+                  letterSpacing: isMacSidebarTheme ? "0.01em" : "0.04em",
+                  color: isMacSidebarTheme ? "rgba(114, 119, 126, 0.96)" : currentTheme.primaryColor,
+                  marginBottom: isMacSidebarTheme ? 8 : 6,
+                  fontFamily: isMacSidebarTheme ? '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif' : sidebarSectionFontFamily,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -12371,8 +12440,10 @@ export default function Page() {
                   cursor: isSimpleSidebarTheme ? "default" : "pointer",
                 }}
               >
-                <span>SMART LISTS</span>
-                <span style={{ color: sidebarToggleColor, fontSize: 16, fontWeight: 500 }}>{smartListsExpanded ? "−" : "+"}</span>
+                <span>Smart Lists</span>
+                <span style={{ color: isMacSidebarTheme ? "rgba(124, 129, 136, 0.96)" : sidebarToggleColor, fontSize: 12, fontWeight: 700 }}>
+                  {smartListsExpanded ? "▾" : "▸"}
+                </span>
               </button>
 
               {smartListsExpanded ? <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -12639,11 +12710,11 @@ export default function Page() {
                   width: "100%",
                   textAlign: "left",
                   fontSize: sidebarHeaderFontSize,
-                  fontWeight: sidebarHeaderFontWeight,
-                  letterSpacing: "0.04em",
-                  color: currentTheme.primaryColor,
-                  marginBottom: 6,
-                  fontFamily: sidebarSectionFontFamily,
+                  fontWeight: isMacSidebarTheme ? 700 : sidebarHeaderFontWeight,
+                  letterSpacing: isMacSidebarTheme ? "0.01em" : "0.04em",
+                  color: isMacSidebarTheme ? "rgba(114, 119, 126, 0.96)" : currentTheme.primaryColor,
+                  marginBottom: isMacSidebarTheme ? 8 : 6,
+                  fontFamily: isMacSidebarTheme ? '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif' : sidebarSectionFontFamily,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -12653,8 +12724,10 @@ export default function Page() {
                   cursor: "pointer",
                 }}
               >
-                <span>DISCOVER</span>
-                <span style={{ color: sidebarToggleColor, fontSize: 16, fontWeight: 500 }}>{discoverOpen ? "−" : "+"}</span>
+                <span>Discover</span>
+                <span style={{ color: isMacSidebarTheme ? "rgba(124, 129, 136, 0.96)" : sidebarToggleColor, fontSize: 12, fontWeight: 700 }}>
+                  {discoverOpen ? "▾" : "▸"}
+                </span>
               </button>
 
               {discoverOpen ? <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -16656,11 +16729,15 @@ export default function Page() {
           scrollbar-width: none;
         }
         .macSidebar {
-          background: linear-gradient(180deg, #f7f8fb 0%, #eef1f5 100%);
-          border-right: 1px solid rgba(20, 24, 31, 0.08);
-          box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.48);
-          backdrop-filter: saturate(1.08) blur(24px);
-          -webkit-backdrop-filter: saturate(1.08) blur(24px);
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+          background: linear-gradient(180deg, #eff1f4 0%, #e5e8ed 100%);
+          border-right: 1px solid rgba(48, 53, 60, 0.1);
+          box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.58), 12px 0 32px rgba(35, 40, 47, 0.05);
+          backdrop-filter: saturate(1.02) blur(22px);
+          -webkit-backdrop-filter: saturate(1.02) blur(22px);
+        }
+        .macSidebar input::placeholder {
+          color: rgba(120, 126, 134, 0.9);
         }
         .sidebar::-webkit-scrollbar {
           width: 0;
@@ -16938,31 +17015,33 @@ export default function Page() {
         .sideItem.primary:hover { background: ${sidebarItemHoverBackground}; }
         .sideItem.primary.active { background: ${currentTheme.activeHighlight}; color: ${currentTheme.secondaryColor}; }
         .macSidebar .sideItem {
-          min-height: 30px;
-          padding: 5px 8px;
+          min-height: 32px;
+          padding: 5px 10px;
           border-radius: 10px;
           border: 1px solid transparent;
-          color: rgba(28, 32, 39, 0.86) !important;
+          color: rgba(35, 39, 46, 0.9) !important;
         }
         .macSidebar .sideItem:hover {
-          background: rgba(17, 24, 39, 0.045) !important;
+          background: rgba(77, 84, 94, 0.06) !important;
         }
         .macSidebar .sideItem.active {
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(244, 234, 236, 0.98) 100%) !important;
-          border-color: rgba(169, 174, 184, 0.22) !important;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 1px 2px rgba(31, 35, 40, 0.06) !important;
-          color: rgba(20, 24, 30, 0.94) !important;
+          background: linear-gradient(180deg, rgba(248, 249, 251, 0.92) 0%, rgba(227, 231, 237, 0.98) 100%) !important;
+          border-color: rgba(176, 182, 190, 0.42) !important;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(31, 35, 40, 0.06) !important;
+          color: rgba(22, 25, 31, 0.96) !important;
         }
         .macSidebar .sideItem > span:first-child {
-          gap: 10px !important;
+          gap: 11px !important;
           font-size: 13px !important;
-          font-weight: 500 !important;
+          font-weight: 540 !important;
+          letter-spacing: -0.01em !important;
         }
         .macSidebar .sideItem.active > span:first-child {
           font-weight: 600 !important;
         }
         .macSidebar .sideItem > span:last-child {
-          gap: 8px !important;
+          margin-left: auto !important;
+          gap: 10px !important;
         }
         .macSidebar .sideItem > span:last-child > span:first-child {
           width: auto !important;
@@ -16971,26 +17050,29 @@ export default function Page() {
           padding: 0 !important;
           border-radius: 0 !important;
           background: transparent !important;
-          color: rgba(101, 107, 116, 0.88) !important;
+          color: rgba(110, 115, 123, 0.9) !important;
           border: none !important;
           font-size: 12px !important;
-          font-weight: 500 !important;
+          font-weight: 560 !important;
         }
         .macSidebar .sideItem.active > span:last-child > span:first-child {
           color: rgba(74, 79, 88, 0.96) !important;
         }
+        .macSidebar .sideItem > span:last-child > span:last-child {
+          display: none !important;
+        }
         .macSidebar .sideItem > span:first-child > span[aria-hidden="true"] {
-          width: 16px !important;
-          height: 16px !important;
+          width: 17px !important;
+          height: 17px !important;
           border-radius: 0 !important;
           background: transparent !important;
         }
         .macSidebar .sideItem img {
-          filter: grayscale(1) saturate(0) brightness(0.38);
+          filter: grayscale(1) saturate(0) brightness(0.28);
           opacity: 0.88;
         }
         .macSidebar .sideItem.active img {
-          opacity: 0.96;
+          opacity: 0.98;
         }
         .sideSubItem {
           width: 100%;
@@ -17015,19 +17097,20 @@ export default function Page() {
           font-weight: 700;
         }
         .macSidebar .sideSubItem {
-          padding: 4px 8px;
+          padding: 4px 10px 4px 30px;
           border: none !important;
           background: transparent !important;
           border-radius: 8px;
-          color: rgba(58, 63, 71, 0.92) !important;
+          color: rgba(73, 79, 88, 0.94) !important;
           font-size: 12px;
           font-weight: 500;
+          letter-spacing: -0.01em;
         }
         .macSidebar .sideSubItem:hover {
-          background: rgba(17, 24, 39, 0.045) !important;
+          background: rgba(77, 84, 94, 0.06) !important;
         }
         .macSidebar .sideSubItem.active {
-          background: rgba(191, 197, 208, 0.18) !important;
+          background: rgba(187, 193, 203, 0.22) !important;
           color: rgba(25, 30, 36, 0.96) !important;
           font-weight: 600 !important;
         }
@@ -17038,7 +17121,7 @@ export default function Page() {
           border-radius: 0 !important;
           border: none !important;
           background: transparent !important;
-          color: rgba(107, 112, 121, 0.82) !important;
+          color: rgba(111, 116, 124, 0.86) !important;
           font-size: 11px !important;
         }
         .case {
