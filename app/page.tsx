@@ -468,7 +468,8 @@ const LIGHT_OAK_TOP_HEADER_IMAGE = "/wood_beam_header_light_oak.png";
 const WEATHERED_OAK_SHELF_IMAGE = "/shelf-weathered-gray-oak.png";
 const ELECTRIC_BLUE_SHELF_THEME = "/shelf-electric-blue.png";
 const SIMPLE_SHELF_THEME = "simpleShelf";
-const DEFAULT_SIMPLE_SHELF_BACKGROUND = "#12363c";
+const DEFAULT_SIMPLE_SHELF_BACKGROUND = "#edf0f4";
+const DEFAULT_SIDEBAR_THEME = "simple";
 const SHELF_TOP_HEADER_IMAGES: Record<string, string> = {
   "/shelves-light-single2.png": LIGHT_OAK_TOP_HEADER_IMAGE,
   "/shelf-dark-walnut.png": "/wood_beam_header_dark_walnut.png",
@@ -1679,6 +1680,7 @@ function getPersistedStandardSortViewLabel(nav: "home" | "books" | "movies" | "t
 }
 
 export default function Page() {
+  const suppressPersistenceWarning = true;
   const tvCsvUrl = process.env.NEXT_PUBLIC_TV_SHEET_CSV_URL;
   const booksCsvUrl = process.env.NEXT_PUBLIC_BOOKS_SHEET_CSV_URL;
   const moviesCsvUrl = process.env.NEXT_PUBLIC_MOVIES_SHEET_CSV_URL;
@@ -1977,7 +1979,7 @@ export default function Page() {
     : SHELF_TOP_HEADER_IMAGES[shelfTheme] || DARK_WALNUT_TOP_HEADER_IMAGE;
   
   // Sidebar theme
-  const [sidebarTheme, setSidebarTheme] = useState<string>("darkBlue");
+  const [sidebarTheme, setSidebarTheme] = useState<string>(DEFAULT_SIDEBAR_THEME);
   const isElectricBlueThemeActive = !useSimpleMobileTheme && (isElectricBlueShelfTheme || sidebarTheme === "electricBlue");
   
   // Theme configurations
@@ -2067,17 +2069,18 @@ export default function Page() {
   const simplePresentationBackground = simpleSidebarTheme.background;
   const isBlueSidebarTheme = sidebarTheme === "darkBlue" || sidebarTheme === "electricBlue";
   const isSimpleSidebarTheme = sidebarTheme === "simple";
+  const isMacSidebarTheme = isSimpleSidebarTheme;
   const isDarkSidebarTheme = isBlueSidebarTheme || isSimpleSidebarTheme;
   const sidebarHasDarkSurface = isBlueSidebarTheme || (isSimpleSidebarTheme && !simpleSidebarIsLight);
   const isElectricBlueSidebarTheme = sidebarTheme === "electricBlue";
   const usesThemeCountBubbleColor = isSimpleSidebarTheme || sidebarTheme === "winterGray";
-  const sidebarModuleStackGap = isElectricBlueSidebarTheme ? 9 : isSimpleSidebarTheme ? 0 : 6;
-  const sidebarModuleMarginTop = isSimpleSidebarTheme ? 8 : 12;
-  const sidebarPrimaryModuleMarginTop = isElectricBlueSidebarTheme ? 9 : isSimpleSidebarTheme ? 0 : 6;
-  const sidebarModuleCardPadding = isSimpleSidebarTheme ? "8px 10px" : "12px";
-  const sidebarSectionSpacing = isSimpleSidebarTheme ? 10 : 16;
-  const sidebarPrimaryModulePadding = isSimpleSidebarTheme ? "8px 10px 0" : sidebarModuleCardPadding;
-  const sidebarDiscoverModulePadding = isSimpleSidebarTheme ? `${sidebarSectionSpacing}px 10px 8px` : sidebarModuleCardPadding;
+  const sidebarModuleStackGap = isElectricBlueSidebarTheme ? 9 : isMacSidebarTheme ? 18 : 6;
+  const sidebarModuleMarginTop = isMacSidebarTheme ? 10 : 12;
+  const sidebarPrimaryModuleMarginTop = isElectricBlueSidebarTheme ? 9 : isMacSidebarTheme ? 0 : 6;
+  const sidebarModuleCardPadding = isMacSidebarTheme ? "0" : "12px";
+  const sidebarSectionSpacing = isMacSidebarTheme ? 18 : 16;
+  const sidebarPrimaryModulePadding = isMacSidebarTheme ? "0" : sidebarModuleCardPadding;
+  const sidebarDiscoverModulePadding = isMacSidebarTheme ? "0" : sidebarModuleCardPadding;
   const sidebarModuleCardBackground = isSimpleSidebarTheme
     ? "transparent"
     : isElectricBlueSidebarTheme
@@ -2101,7 +2104,7 @@ export default function Page() {
   const sidebarSectionFontFamily = isSimpleSidebarTheme
     ? "\"Geist Sans\", \"Geist\", \"Segoe UI\", sans-serif"
     : "\"Nunito\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Roboto\", sans-serif";
-  const sidebarBackplateOpacity = isSimpleSidebarTheme ? 1 : sidebarTheme === "winterGray" ? 0.8 : isDarkSidebarTheme ? 0.9 : 0.84;
+  const sidebarBackplateOpacity = isMacSidebarTheme ? 1 : sidebarTheme === "winterGray" ? 0.8 : isDarkSidebarTheme ? 0.9 : 0.84;
   const sidebarBackplateBackgroundSize = isSimpleSidebarTheme ? "100% 100%" : "auto, 100% 100%";
   const sidebarBackplateBackgroundPosition = isSimpleSidebarTheme ? "0 0" : "0 0, 0 0";
   const sidebarShellBackground = isSimpleSidebarTheme ? "transparent" : "rgba(255, 255, 255, 0.125)";
@@ -5129,7 +5132,7 @@ export default function Page() {
     }
     setSmartListManualOrderKeysById(loadedSmartListManualOrders);
     
-    setSidebarTheme(getSetting("sidebarTheme", "darkBlue"));
+    setSidebarTheme(getSetting("sidebarTheme", DEFAULT_SIDEBAR_THEME));
     setShelfTheme(normalizeShelfTheme(getSetting("shelfTheme", DEFAULT_SHELF_IMAGE)));
     setSimpleShelfBackgroundColor(normalizeHexColor(getSetting("simpleShelfBackgroundColor", DEFAULT_SIMPLE_SHELF_BACKGROUND)));
   }, [getCachedNumericSetting, getSetting, settingsRows]);
@@ -5782,7 +5785,7 @@ export default function Page() {
         setSidebarHeaderFontWeight(getStr("sidebarHeaderFontWeight", "600"));
         setShelfTheme(normalizeShelfTheme(getStr("shelfTheme", DEFAULT_SHELF_IMAGE)));
         setSimpleShelfBackgroundColor(normalizeHexColor(getStr("simpleShelfBackgroundColor", DEFAULT_SIMPLE_SHELF_BACKGROUND)));
-        setSidebarTheme(getStr("sidebarTheme", "darkBlue"));
+        setSidebarTheme(getStr("sidebarTheme", DEFAULT_SIDEBAR_THEME));
         setShowStatusIndicators(getBool("showStatusIndicators", false));
       }, 100);
       
@@ -9813,6 +9816,7 @@ export default function Page() {
       watchlistTv,
     };
   }, [allShows, allBooks, allMovies, allGames, hasOwnedOwnership, hasWishlistOwnership, isMovieWatched, normalizeStatus]);
+  const totalLibraryItems = stats.books + stats.movies + stats.tv + stats.games;
 
   const postersPerShelf = useMemo(() => {
     const size = isSimpleShelfPresentation
@@ -10641,7 +10645,7 @@ export default function Page() {
       >
         {/* LEFT MENU */}
         <aside
-          className="sidebar"
+          className={`sidebar${isMacSidebarTheme ? " macSidebar" : ""}`}
           style={{
             position: "sticky",
             top: topSafeInset,
@@ -10659,7 +10663,7 @@ export default function Page() {
             boxShadow: "none",
             display: isMobileLayout ? "none" : "flex",
             flexDirection: "column",
-            padding: "6px",
+            padding: isMacSidebarTheme ? "0" : "6px",
           }}
         >
           <div
@@ -10672,15 +10676,27 @@ export default function Page() {
               bottom: 0,
               zIndex: 0,
               pointerEvents: "none",
-              backgroundImage: isSimpleShelfPresentation ? simplePresentationBackground : `url(${shelfTheme})`,
+              backgroundImage: isMacSidebarTheme
+                ? "linear-gradient(180deg, #f7f8fb 0%, #eef1f5 100%)"
+                : isSimpleShelfPresentation
+                  ? simplePresentationBackground
+                  : `url(${shelfTheme})`,
               backgroundRepeat: "repeat-y",
               backgroundPosition: "center top",
               backgroundSize: isElectricBlueShelfPresentation
                 ? `calc(100% + 2px) ${shelfRowHeight + 2}px`
-                : isSimpleShelfPresentation
+                : isMacSidebarTheme
+                  ? "100% 100%"
+                  : isSimpleShelfPresentation
                   ? "100% 100%"
                   : `100% ${shelfRowHeight}px`,
-              backgroundColor: isElectricBlueShelfPresentation ? "rgba(5, 13, 30, 0.88)" : isSimpleShelfPresentation ? simpleShelfBackgroundColor : "transparent",
+              backgroundColor: isElectricBlueShelfPresentation
+                ? "rgba(5, 13, 30, 0.88)"
+                : isMacSidebarTheme
+                  ? "#eef1f5"
+                  : isSimpleShelfPresentation
+                    ? simpleShelfBackgroundColor
+                    : "transparent",
               boxShadow: isElectricBlueShelfPresentation
                 ? "0 0 26px rgba(58, 125, 232, 0.2), inset 0 0 0 1px rgba(7, 21, 45, 0.6)"
                 : isSimpleShelfPresentation
@@ -10717,13 +10733,15 @@ export default function Page() {
             aria-hidden
             style={{
               position: "absolute",
-              inset: 6,
+              inset: isMacSidebarTheme ? 0 : 6,
               zIndex: 1,
               pointerEvents: "none",
-              borderRadius: isSimpleSidebarTheme ? 12 : 16,
+              borderRadius: isMacSidebarTheme ? 0 : isSimpleSidebarTheme ? 12 : 16,
               overflow: "hidden",
               opacity: sidebarBackplateOpacity,
-              backgroundImage: currentTheme.background,
+              backgroundImage: isMacSidebarTheme
+                ? "linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(247, 249, 252, 0.96) 100%)"
+                : currentTheme.background,
               backgroundSize: sidebarBackplateBackgroundSize,
               backgroundPosition: sidebarBackplateBackgroundPosition,
             }}
@@ -10735,7 +10753,7 @@ export default function Page() {
               position: "relative",
               zIndex: 2,
               background: sidebarShellBackground,
-              borderRadius: isSimpleSidebarTheme ? 12 : 16,
+              borderRadius: isMacSidebarTheme ? 0 : isSimpleSidebarTheme ? 12 : 16,
               boxShadow: sidebarShellShadow,
               border: "none",
               display: "flex",
@@ -10751,33 +10769,83 @@ export default function Page() {
             style={{
               background: "transparent",
               borderBottom: "none",
-              padding: "0px 8px 10px 8px",
+              padding: isMacSidebarTheme ? "12px 12px 8px 12px" : "0px 8px 10px 8px",
               border: "none",
               overflow: "visible",
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: isMacSidebarTheme ? "stretch" : "center",
               justifyContent: "flex-start",
-              gap: 8,
+              gap: isMacSidebarTheme ? 0 : 8,
               minHeight: "auto",
             }}
           >
-            {/* Logo taking full width */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={isBlueSidebarTheme ? "/logo5.png" : APP_ICON}
-              alt={APP_TITLE}
-              style={{
-                width: logoSize,
-                height: "auto",
-                objectFit: "contain",
-                objectPosition: "center",
-                flexShrink: 0,
-                marginTop: logoTop,
-                marginLeft: logoLeft,
-                filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45))",
-              }}
-            />
+            {isMacSidebarTheme ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "0 4px 10px 4px",
+                  borderBottom: sidebarSectionDividerColor,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={APP_ICON}
+                  alt={APP_TITLE}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    objectFit: "contain",
+                    flexShrink: 0,
+                    filter: "grayscale(1) saturate(0) brightness(0.38)",
+                    opacity: 0.88,
+                  }}
+                />
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "rgba(24, 28, 34, 0.92)",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    Library
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "rgba(100, 106, 116, 0.86)",
+                      marginTop: 2,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {loading ? "Loading..." : `${totalLibraryItems} items`}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Logo taking full width */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={isBlueSidebarTheme ? "/logo5.png" : APP_ICON}
+                  alt={APP_TITLE}
+                  style={{
+                    width: logoSize,
+                    height: "auto",
+                    objectFit: "contain",
+                    objectPosition: "center",
+                    flexShrink: 0,
+                    marginTop: logoTop,
+                    marginLeft: logoLeft,
+                    filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45))",
+                  }}
+                />
+              </>
+            )}
           </div>
 
           {/* Rolodex Counter */}
@@ -14528,7 +14596,7 @@ export default function Page() {
             </div>
           ) : null}
 
-          {missingWriteConfigChecks.length > 0 ? (
+          {!suppressPersistenceWarning && missingWriteConfigChecks.length > 0 ? (
             <div
               style={{
                 background: "#fff7e6",
@@ -16939,6 +17007,13 @@ export default function Page() {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+        .macSidebar {
+          background: linear-gradient(180deg, #f7f8fb 0%, #eef1f5 100%);
+          border-right: 1px solid rgba(20, 24, 31, 0.08);
+          box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.48);
+          backdrop-filter: saturate(1.08) blur(24px);
+          -webkit-backdrop-filter: saturate(1.08) blur(24px);
+        }
         .sidebar::-webkit-scrollbar {
           width: 0;
           height: 0;
@@ -16953,9 +17028,22 @@ export default function Page() {
           height: 0;
           display: none;
         }
+        .macSidebar .sidebarScrollContent {
+          background: transparent !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+        }
         .sidebarModuleCard {
           position: relative;
           isolation: isolate;
+        }
+        .macSidebar .sidebarModuleCard {
+          background: transparent !important;
+          border: none !important;
+          border-bottom: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          padding: 0 !important;
         }
         .sidebarModuleCard > * {
           position: relative;
@@ -17201,6 +17289,61 @@ export default function Page() {
         .sideItem.primary { background: transparent; }
         .sideItem.primary:hover { background: ${sidebarItemHoverBackground}; }
         .sideItem.primary.active { background: ${currentTheme.activeHighlight}; color: ${currentTheme.secondaryColor}; }
+        .macSidebar .sideItem {
+          min-height: 30px;
+          padding: 5px 8px;
+          border-radius: 10px;
+          border: 1px solid transparent;
+          color: rgba(28, 32, 39, 0.86) !important;
+        }
+        .macSidebar .sideItem:hover {
+          background: rgba(17, 24, 39, 0.045) !important;
+        }
+        .macSidebar .sideItem.active {
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(244, 234, 236, 0.98) 100%) !important;
+          border-color: rgba(169, 174, 184, 0.22) !important;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 1px 2px rgba(31, 35, 40, 0.06) !important;
+          color: rgba(20, 24, 30, 0.94) !important;
+        }
+        .macSidebar .sideItem > span:first-child {
+          gap: 10px !important;
+          font-size: 13px !important;
+          font-weight: 500 !important;
+        }
+        .macSidebar .sideItem.active > span:first-child {
+          font-weight: 600 !important;
+        }
+        .macSidebar .sideItem > span:last-child {
+          gap: 8px !important;
+        }
+        .macSidebar .sideItem > span:last-child > span:first-child {
+          width: auto !important;
+          min-width: 0 !important;
+          height: auto !important;
+          padding: 0 !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+          color: rgba(101, 107, 116, 0.88) !important;
+          border: none !important;
+          font-size: 12px !important;
+          font-weight: 500 !important;
+        }
+        .macSidebar .sideItem.active > span:last-child > span:first-child {
+          color: rgba(74, 79, 88, 0.96) !important;
+        }
+        .macSidebar .sideItem > span:first-child > span[aria-hidden="true"] {
+          width: 16px !important;
+          height: 16px !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+        }
+        .macSidebar .sideItem img {
+          filter: grayscale(1) saturate(0) brightness(0.38);
+          opacity: 0.88;
+        }
+        .macSidebar .sideItem.active img {
+          opacity: 0.96;
+        }
         .sideSubItem {
           width: 100%;
           padding: 4px 6px;
@@ -17222,6 +17365,33 @@ export default function Page() {
           border-color: ${currentTheme.highlightBorder};
           color: ${sidebarSubItemActiveTextColor};
           font-weight: 700;
+        }
+        .macSidebar .sideSubItem {
+          padding: 4px 8px;
+          border: none !important;
+          background: transparent !important;
+          border-radius: 8px;
+          color: rgba(58, 63, 71, 0.92) !important;
+          font-size: 12px;
+          font-weight: 500;
+        }
+        .macSidebar .sideSubItem:hover {
+          background: rgba(17, 24, 39, 0.045) !important;
+        }
+        .macSidebar .sideSubItem.active {
+          background: rgba(191, 197, 208, 0.18) !important;
+          color: rgba(25, 30, 36, 0.96) !important;
+          font-weight: 600 !important;
+        }
+        .macSidebar .sideSubItem span:last-child {
+          min-width: 0 !important;
+          height: auto !important;
+          padding: 0 !important;
+          border-radius: 0 !important;
+          border: none !important;
+          background: transparent !important;
+          color: rgba(107, 112, 121, 0.82) !important;
+          font-size: 11px !important;
         }
         .case {
           position: relative;
