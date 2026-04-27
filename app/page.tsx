@@ -227,7 +227,6 @@ const APP_TITLE = "Chris’ Delicious Library";
 const APP_VERSION = "5.3.4";
 const STATIC_SITE_WRITE_MESSAGE =
   "This GitHub Pages version is read-only for server-backed actions. Use the server-hosted version to save edits.";
-const SPLASH_MIN_DURATION_MS = 1500;
 const MANUAL_SORT_FIELD = "Manual";
 const SMART_LISTS_SETTING_KEY = "smartLists:v1";
 const SMART_LIST_MANUAL_ORDER_SETTING_PREFIX = "smartListManualOrder:";
@@ -1775,8 +1774,6 @@ export default function Page() {
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
   const [loading, setLoading] = useState(false);
-  const [splashMinDurationDone, setSplashMinDurationDone] = useState(false);
-  const [initialLoadSettled, setInitialLoadSettled] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tvRows, setTvRows] = useState<Row[]>([]);
   const [bookRows, setBookRows] = useState<Row[]>([]);
@@ -4358,16 +4355,6 @@ export default function Page() {
   );
 
   useEffect(() => {
-    const splashTimer = window.setTimeout(() => {
-      setSplashMinDurationDone(true);
-    }, SPLASH_MIN_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(splashTimer);
-    };
-  }, []);
-
-  useEffect(() => {
     // Need at least one CSV URL to proceed
     if (!tvCsvUrl && !booksCsvUrl && !moviesCsvUrl && !gamesCsvUrl) {
       setError(
@@ -4375,7 +4362,6 @@ export default function Page() {
       );
       setSyncState("error");
       setSyncMsg("Missing CSV URL(s)");
-      setInitialLoadSettled(true);
       return;
     }
 
@@ -4447,7 +4433,6 @@ export default function Page() {
         setSyncMsg("Synced");
         setLastSyncAt(Date.now());
         setLoading(false);
-        setInitialLoadSettled(true);
       })
       .catch((e) => {
         if (cancelled) return;
@@ -4455,7 +4440,6 @@ export default function Page() {
         setSyncState("error");
         setSyncMsg(e?.message || "Sync failed");
         setLoading(false);
-        setInitialLoadSettled(true);
       });
 
     return () => {
@@ -10027,7 +10011,6 @@ export default function Page() {
     { key: "completed", label: "Completed" },
     { key: "abandoned", label: "Abandoned" },
   ];
-  const showStartupSplash = !splashMinDurationDone || !initialLoadSettled;
   const useElectricBlueStatsBackdrop = nav === "statistics" && isElectricBlueThemeActive;
   const mobileBottomDockVisible = isMobileLayout && nav !== "statistics";
 
@@ -10046,112 +10029,6 @@ export default function Page() {
         "--neon-sync-offset": isElectricBlueSidebarTheme ? neonSyncStartOffset : "0s",
       } as CSSProperties}
     >
-      {showStartupSplash ? (
-        <>
-          <style>{`
-            @keyframes startupSplashSpin {
-              to {
-                transform: rotate(360deg);
-              }
-            }
-          `}</style>
-          <div
-            role="status"
-            aria-live="polite"
-            aria-label={`${APP_TITLE} is loading`}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 2147483600,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(4, 8, 18, 0.12)",
-              backdropFilter: "blur(2px)",
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                width: "min(calc(100vw - 18px), 1600px)",
-                height: "min(calc(100vh - 18px), 980px)",
-                borderRadius: "clamp(28px, 3.5vw, 52px)",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background:
-                  "radial-gradient(140% 90% at 50% 0%, rgba(88, 133, 215, 0.23) 0%, rgba(88, 133, 215, 0) 56%), linear-gradient(180deg, rgba(18, 34, 61, 0.82) 0%, rgba(8, 18, 38, 0.82) 100%)",
-                border: "1px solid rgba(123, 165, 236, 0.42)",
-                boxShadow:
-                  "0 28px 80px rgba(2, 8, 18, 0.72), inset 0 0 0 1px rgba(81, 126, 201, 0.22)",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <div
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  pointerEvents: "none",
-                  background:
-                    "linear-gradient(180deg, rgba(163, 199, 255, 0.2) 0%, rgba(163, 199, 255, 0.05) 22%, rgba(163, 199, 255, 0) 58%)",
-                }}
-              />
-              <div
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  pointerEvents: "none",
-                  background:
-                    "radial-gradient(130% 120% at 50% 50%, rgba(10, 24, 46, 0) 42%, rgba(6, 12, 24, 0.34) 100%)",
-                }}
-              />
-              <div
-                style={{
-                  position: "relative",
-                  zIndex: 1,
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "clamp(30px, 5vh, 66px)",
-                  padding: "clamp(22px, 5vw, 72px)",
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={APP_ICON}
-                  alt={APP_TITLE}
-                  style={{
-                    width: "clamp(420px, 56vw, 980px)",
-                    maxWidth: "90%",
-                    height: "auto",
-                    objectFit: "contain",
-                    filter: "drop-shadow(0 14px 24px rgba(0, 0, 0, 0.46))",
-                  }}
-                />
-                <div
-                  aria-hidden
-                  style={{
-                    width: "clamp(92px, 11vw, 160px)",
-                    height: "clamp(92px, 11vw, 160px)",
-                    borderRadius: "50%",
-                    border: "clamp(8px, 0.9vw, 12px) solid rgba(126, 167, 243, 0.28)",
-                    borderTopColor: "#82b3ff",
-                    borderRightColor: "#b4d0ff",
-                    boxShadow: "0 0 28px rgba(89, 141, 240, 0.48)",
-                    animation: "startupSplashSpin 860ms linear infinite",
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      ) : null}
       {nav !== "statistics" ? (
         <div
           aria-hidden
